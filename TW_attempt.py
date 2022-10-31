@@ -10,8 +10,8 @@ import Pop_tw
 
 items = Items.ItemList() # class object
 items.setItems()
-genT=5  # generation count for option T
-genH=10  # generation count for option H
+genT = 10  # generation count for option T
+genH = 100  # generation count for option H
 
 def optL():
     global items
