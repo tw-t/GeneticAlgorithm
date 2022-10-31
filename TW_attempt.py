@@ -8,7 +8,13 @@ import Genome_tw
 import g
 import Pop_tw
 
+items = Items.ItemList() # class object
+items.setItems()
+genT=5  # generation count for option T
+genH=10  # generation count for option H
+
 def optL():
+    global items
     items.listItems()
     print("");
 
@@ -17,10 +23,18 @@ def opt1():
     g.population.run1Gen()
     pass
 
+# program for option T and H
+def optT(gens):
+    global items, population, globalRand
+    print("Running {} times".format(gens))
+    for i in range(0,gens):    # option T just runs option 1 ten times
+        g.population.run1Gen()
+    pass
+
 # reset sequence
 def optR():
     global items, population, globalRand
-    Items.ItemList().setItems()
+    items.setItems()
     g.population = Pop_tw.Population(g.globalRand) # why??
     g.population.popReset(g.globalRand) # resets population individuals
     g.mutations=0 # resets global mutation count
@@ -47,8 +61,8 @@ def menu():
         print("Main Menu")
         print("E - Exit")
         print("1 - Run 1 generation")
-#        print("T - Run generations "+str(genT)+" of them")        
-#        print("H - Run generations "+str(genH)+" of them")
+        print("T - Run generations "+str(genT)+" of them")        
+        print("H - Run generations "+str(genH)+" of them")
         print("L - List all items")
 #        print("G - List a gene from the gene pool (population)")        
 #        print("D - List a gene from the gene pool (population) Full")
@@ -64,8 +78,8 @@ def menu():
 #        if (opt == "G"): optG(False) 
 #        if (opt == "D"): optG(True)        
         if (opt == "P"): optP()        
-#        if (opt == "T"): optT(genT)
-#        if (opt == "H"): optT(genH)
+        if (opt == "T"): optT(genT)
+        if (opt == "H"): optT(genH)
 #        if (opt == "A"): optA()
 
 # this is the main program
