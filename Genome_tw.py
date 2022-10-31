@@ -66,6 +66,7 @@ class Genome(object):
 
         return retv
 
+
     def calcScoreG(self):
         global globalRand
         global POPULATION
@@ -73,7 +74,7 @@ class Genome(object):
         global NUM_OF_ITEMS
         global NUM_OF_TRUCKS
 
-        self.score= g.TRUCK_CAPACITY * g.NUM_OF_TRUCKS
+        self.score=0
         self.s0 = 0
         self.s1 = 0
         self.s2 = 0
@@ -81,7 +82,7 @@ class Genome(object):
 
 
         # sequence to add up weight of items in each truck of one individual
-        # condition to give bias according to importance
+        # condition to give bias according to importance (incetivising)
         for i in range(0, g.NUM_OF_ITEMS):
             # left out list
             if (self.genome[i] == 0):
@@ -90,57 +91,46 @@ class Genome(object):
             # truck 1
             if (self.genome[i] == 1):
                 self.s1 = self.s1 + items.lst[i].size # calculates total sum for truck 1
-#                if (items.1st[i].importance == "N"):
-#                    self.score = self.score +3
-#                if (items.1st[i].importance == "I"):
-#                    self.score = self.score +2
-#                if (items.1st[i].importance == "V"):
-#                    self.score = self.score +1
-#                if (items.1st[i].importance == "C"):
-#                    self.score = self.score +0
+                if (items.lst[i].importance == "N"):
+                    self.score = self.score -0
+                if (items.lst[i].importance == "I"):
+                    self.score = self.score -1
+                if (items.lst[i].importance == "V"):
+                    self.score = self.score -2
+                if (items.lst[i].importance == "C"):
+                    self.score = self.score -3
 
             # truck 2
             if (self.genome[i] == 2):
                 self.s2 = self.s2 + items.lst[i].size # calculates total sum for truck 2
-#                if (items.1st[i].importance == "N"):
-#                    self.score = self.score +3
-#                if (items.1st[i].importance == "I"):
-#                    self.score = self.score +2
-#                if (items.1st[i].importance == "V"):
-#                    self.score = self.score +1
-#                if (items.1st[i].importance == "C"):
-#                    self.score = self.score +0
+                if (items.lst[i].importance == "N"):
+                    self.score = self.score -0
+                if (items.lst[i].importance == "I"):
+                    self.score = self.score -1
+                if (items.lst[i].importance == "V"):
+                    self.score = self.score -2
+                if (items.lst[i].importance == "C"):
+                    self.score = self.score -3
 
             # truck 3
             if (self.genome[i] == 3):
                 self.s3 = self.s3 + items.lst[i].size # calculates total sum for truck 3
-#                if (items.1st[i].importance == "N"):
-#                    self.score = self.score +3
-#                if (items.1st[i].importance == "I"):
-#                    self.score = self.score +2
-#                if (items.1st[i].importance == "V"):
-#                    self.score = self.score +1
-#                if (items.1st[i].importance == "C"):
-#                    self.score = self.score +0
+                if (items.lst[i].importance == "N"):
+                    self.score = self.score -0
+                if (items.lst[i].importance == "I"):
+                    self.score = self.score -1
+                if (items.lst[i].importance == "V"):
+                    self.score = self.score -2
+                if (items.lst[i].importance == "C"):
+                    self.score = self.score -3
 
         # condition to penalise overloading
         for s in [self.s1, self.s2, self.s3]: # note s0 does not affect score
             if (s > g.TRUCK_CAPACITY):
-                self.score = abs(s - self.score)
-                self.score = self.score +2
+                self.score = self.score + abs(g.TRUCK_CAPACITY - s)
+                self.score = self.score + 20
 
             else:
-                self.score = self.score - s
-
-
- #       if (self.s1 > g.TRUCK_CAPACITY or self.s2 > g.TRUCK_CAPACITY or self.s3 > g.TRUCK_CAPACITY):
- #           self.score = self.s1 + self.s2 + self.s3 - g.TRUCK_CAPACITY * g.NUM_OF_TRUCKS
- #           self.score = self.score +2
-
-
- #       else:
- #           self.score = g.TRUCK_CAPACITY * g.NUM_OF_TRUCKS - self.s1 - self.s2 - self.s3 # note s0 does not affect score
-
-
+                self.score = self.score + g.TRUCK_CAPACITY - s
            
         return self.score
