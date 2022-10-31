@@ -43,27 +43,27 @@ class Genome(object):
         truck2 = ""
         truck3 = ""
 
-        retv = "score="+str(self.score)+" "  # prints out score, gen and mutations of individual in one line
-        retv = retv +  "gen="+str(self.generation)+" " 
-        retv = retv + "mutations="+str(self.mutations)+" \n" # line break
+        retv="Score: {score}, generations: {gen}, mutations: {mut}".format(score=self.score, gen=self.generation, mut=self.mutations) + " \n"
+        
         for i in range(0, g.NUM_OF_ITEMS):  # this is the list genomes
             # left out list
-            if (genome[i] == 0):
+            if (self.genome[i] == 0):
                 leftout = leftout + str(i) + ", "
             # truck 1 list
-            if (genome[i] == 1):
+            if (self.genome[i] == 1):
                 truck1 = truck1 + str(i) + ", "
             # truck 2 list
-            if (genome[i] == 2):
+            if (self.genome[i] == 2):
                 truck2 = truck2 + str(i) + ", "
             # truck 3 list
-            if (genome[i] == 3):
+            if (self.genome[i] == 3):
                 truck3 = truck3 + str(i) + ", "
 
-            retv = retv + "Truck 1:" + str(truck1) + " \n"
-            retv = retv + "Truck 2:" + str(truck2) + " \n"
-            retv = retv + "Truck 3:" + str(truck3) + " \n"
-            retv = retv + "Left out:" + str(leftout)
+        retv = retv + "Truck 1: " + str(truck1) + " \n" + "Total size: " + str(self.s1) + " \n"
+        retv = retv + "Truck 2: " + str(truck2) + " \n" + "Total size: " + str(self.s2) + " \n"
+        retv = retv + "Truck 3: " + str(truck3) + " \n" + "Total size: " + str(self.s3) + " \n"
+        retv = retv + "Left out: " + str(leftout) + " \n" + "Remaining size: " + str(self.s0)
+
         return retv
 
     def calcScoreG(self):
