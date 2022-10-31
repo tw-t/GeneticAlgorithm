@@ -5,6 +5,7 @@ import Items
 import g
 
 items = Items.ItemList() # class object
+items.setItems()
 
 class Genome(object):
 
@@ -35,7 +36,7 @@ class Genome(object):
         self.calcScoreG()
 
     # display sequence for an individual
-    def show(self):
+    def showG(self):
         retv = ""
         leftout = ""
         truck1 = ""
