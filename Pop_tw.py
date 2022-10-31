@@ -93,14 +93,14 @@ class Population:
 
     def show(self, num):
         # creates a string do describe the population member, will work with function of same name in Genom.py
-        retv = "pop number "+str(num)+" "
+        retv = "Best individual details: " + " \n"
         retv = retv + self.pop[num].showG()
         return retv
 
     def showBest(self):
         print("Best individual is "+str(g.best)) # displays best individual ID
         print(self.show(g.best))  # less detail  ## runs show() in Genome_tw.py
-        print("generations="+str(g.generation)+"  mutations="+str(g.mutations)) # prints global gen and mut count (mutation count only have global count, gen have individual count)
+        print("Global details: generations="+str(g.generation)+"  mutations="+str(g.mutations)) # prints global gen and mut count (mutation count only have global count, gen have individual count)
 
     def run1Gen(self):
         global globalRand, population
