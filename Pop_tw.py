@@ -24,7 +24,7 @@ class Population:
         self.pop[0].calcScoreG() # calculate score of first individual
         g.bestScore = self.pop[0].score # initialise with score of first individual  ## still need g.???
         for i in range(1, g.POPULATION): # looping through each individual in population
-            self.pop[i].calcScore() # finding score of 'the next' individual
+            self.pop[i].calcScoreG() # finding score of 'the next' individual
             if (self.pop[i].score < g.bestScore): # if the score of 'the next' individual is better (lower) than current, then replace
                 retv = i;
                 g.best=i # finds and sets the best performing individual id
@@ -52,8 +52,8 @@ class Population:
             self.pop[killMe].mutations = self.pop[killMe].mutations + 1; # add one to individual mutation marker
 
             for k in range(0,g.rndInt(rng, 1, 8)): # repeat swap for 1 to 8 times
-               i = Glob.rndInt(rng, 0, g.NUM_OF_ITEMS -1) # choosing the item to re-allocate
-               self.pop[killMe].genome[i] = rndInt(g.globalRand, 0, g.NUM_OF_TRUCKS) # randomly re-allocate selected item again
+               i = g.rndInt(rng, 0, g.NUM_OF_ITEMS -1) # choosing the item to re-allocate
+               self.pop[killMe].genome[i] = g.rndInt(g.globalRand, 0, g.NUM_OF_TRUCKS) # randomly re-allocate selected item again
 
 
     def breed(self, rng):
@@ -87,10 +87,15 @@ class Population:
         global globalRand
         gg = int(g.POPULATION / 2) # half of population number (50 in our case)
         for i in range(0, gg):
-            self.breed(globalRand); # performing breed function 50 times
+            self.breed(g.globalRand); # performing breed function 50 times
         g.best = self.calcScore(); # find the best individual ID through the calcScore() above
         g.generation = g.generation +1 # add one to global generation count
 
+    def show(self, num):
+        # creates a string do describe the population member, will work with function of same name in Genom.py
+        retv = "pop number "+str(num)+" "
+        retv = retv + self.pop[num].showG()
+        return retv
 
     def showBest(self):
         print("Best individual is "+str(g.best)) # displays best individual ID
