@@ -83,13 +83,13 @@ class Genome(object):
 
         # sequence to add up weight of items in each truck of one individual
         # condition to give bias according to importance (incetivising)
-        for i in range(0, g.NUM_OF_ITEMS):
+        for i, v in enumerate(self.genome):
             # left out list
-            if (self.genome[i] == 0):
+            if (v == 0):
                 self.s0 = self.s0 + items.lst[i].size # calculates total sum for left out list
 
             # truck 1
-            if (self.genome[i] == 1):
+            if (v == 1):
                 self.s1 = self.s1 + items.lst[i].size # calculates total sum for truck 1
                 if (items.lst[i].importance == "N"):
                     self.score = self.score -0
@@ -101,7 +101,7 @@ class Genome(object):
                     self.score = self.score -3
 
             # truck 2
-            if (self.genome[i] == 2):
+            if (v == 2):
                 self.s2 = self.s2 + items.lst[i].size # calculates total sum for truck 2
                 if (items.lst[i].importance == "N"):
                     self.score = self.score -0
@@ -113,7 +113,7 @@ class Genome(object):
                     self.score = self.score -3
 
             # truck 3
-            if (self.genome[i] == 3):
+            if (v == 3):
                 self.s3 = self.s3 + items.lst[i].size # calculates total sum for truck 3
                 if (items.lst[i].importance == "N"):
                     self.score = self.score -0
@@ -129,8 +129,11 @@ class Genome(object):
             if (s > g.TRUCK_CAPACITY):
                 self.score = self.score + abs(g.TRUCK_CAPACITY - s)
                 self.score = self.score + 20
-
             else:
                 self.score = self.score + g.TRUCK_CAPACITY - s
+
+        # condition to bring Triage (strongly incentivise)
+        if (self.genome[31] !=0):
+            self.score = self.score -5
            
         return self.score
