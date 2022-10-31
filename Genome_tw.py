@@ -59,9 +59,9 @@ class Genome(object):
             if (self.genome[i] == 3):
                 truck3 = truck3 + str(i) + ", "
 
-        retv = retv + "Truck 1: " + str(truck1) + " \n" + "Total size: " + str(self.s1) + " \n"
-        retv = retv + "Truck 2: " + str(truck2) + " \n" + "Total size: " + str(self.s2) + " \n"
-        retv = retv + "Truck 3: " + str(truck3) + " \n" + "Total size: " + str(self.s3) + " \n"
+        retv = retv + "Truck 1: " + str(truck1) + " \n" + "Total size: " + str(self.s1) + "/" + str(g.TRUCK_CAPACITY) + " \n"
+        retv = retv + "Truck 2: " + str(truck2) + " \n" + "Total size: " + str(self.s2) + "/" + str(g.TRUCK_CAPACITY) + " \n"
+        retv = retv + "Truck 3: " + str(truck3) + " \n" + "Total size: " + str(self.s3) + "/" + str(g.TRUCK_CAPACITY) + " \n"
         retv = retv + "Left out: " + str(leftout) + " \n" + "Remaining size: " + str(self.s0)
 
         return retv
@@ -73,7 +73,7 @@ class Genome(object):
         global NUM_OF_ITEMS
         global NUM_OF_TRUCKS
 
-        self.score=0
+        self.score= g.TRUCK_CAPACITY * g.NUM_OF_TRUCKS
         self.s0 = 0
         self.s1 = 0
         self.s2 = 0
@@ -124,13 +124,22 @@ class Genome(object):
 #                    self.score = self.score +0
 
         # condition to penalise overloading
-        if (self.s1 > g.TRUCK_CAPACITY or self.s2 > g.TRUCK_CAPACITY or self.s3 > g.TRUCK_CAPACITY):
-            self.score = self.s1 + self.s2 + self.s3 - g.TRUCK_CAPACITY * g.NUM_OF_TRUCKS
-            self.score = self.score +2
+        for s in [self.s1, self.s2, self.s3]: # note s0 does not affect score
+            if (s > g.TRUCK_CAPACITY):
+                self.score = abs(s - self.score)
+                self.score = self.score +2
+
+            else:
+                self.score = self.score - s
 
 
-        else:
-            self.score = g.TRUCK_CAPACITY * g.NUM_OF_TRUCKS - self.s1 - self.s2 - self.s3 # note s0 does not affect score
+ #       if (self.s1 > g.TRUCK_CAPACITY or self.s2 > g.TRUCK_CAPACITY or self.s3 > g.TRUCK_CAPACITY):
+ #           self.score = self.s1 + self.s2 + self.s3 - g.TRUCK_CAPACITY * g.NUM_OF_TRUCKS
+ #           self.score = self.score +2
+
+
+ #       else:
+ #           self.score = g.TRUCK_CAPACITY * g.NUM_OF_TRUCKS - self.s1 - self.s2 - self.s3 # note s0 does not affect score
 
 
            
