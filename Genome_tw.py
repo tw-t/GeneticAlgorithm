@@ -124,7 +124,7 @@ class Genome(object):
                 if (items.lst[i].importance == "C"):
                     self.score = self.score -3
 
-        # condition to penalise overloading
+        # condition to penalise overloading (strongly penalise)
         for s in [self.s1, self.s2, self.s3]: # note s0 does not affect score
             if (s > g.TRUCK_CAPACITY):
                 self.score = self.score + abs(g.TRUCK_CAPACITY - s)
@@ -133,7 +133,15 @@ class Genome(object):
                 self.score = self.score + g.TRUCK_CAPACITY - s
 
         # condition to bring Triage (strongly incentivise)
-        if (self.genome[31] !=0):
+        if (self.genome[31] != 0):
             self.score = self.score -5
+
+        # condition to treat two part hospital tents as one (strongly penalise)
+        if (self.genome[4] != 0 and self.genome[5] == 0):
+            self.score = self.score + 10
+
+        if (self.genome[5] != 0 and self.genome[4] == 0):
+            self.score = self.score + 10
+
            
         return self.score
