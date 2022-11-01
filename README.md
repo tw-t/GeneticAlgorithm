@@ -10,7 +10,7 @@ Objective: (in order of importance)
 1. Fill up the trucks (and not overload) -DONE
 2. Give bias to importance -DONE
 3. must include the Hospital triage unit -DONE
-4. treat the hospital as a two truck load 
+4. treat the hospital as a two truck load -DONE
 5. must include at least two of the four petrol items
 6. (EXTRA) Code to detect duplicated individuals, count and modify duplication 
 
