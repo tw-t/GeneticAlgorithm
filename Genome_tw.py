@@ -139,9 +139,15 @@ class Genome(object):
         # condition to treat two part hospital tents as one (strongly penalise)
         if (self.genome[4] != 0 and self.genome[5] == 0):
             self.score = self.score + 10
-
         if (self.genome[5] != 0 and self.genome[4] == 0):
             self.score = self.score + 10
+
+        # condition to bring 2 out of 4 petrol items
+        petrol_items = [self.genome[7], self.genome[8], self.genome[9], self.genome[22]]
+        if (petrol_items.count(0) > 2): # 3 or 4 petrol items assigned to leftout list (strong penalty)
+            self.score = self.score + 10
+        if (petrol_items.count(0) <= 2): # at least 2 petrol items brought  (strongly incentivise)
+            self.score = self.score -5
 
            
         return self.score
