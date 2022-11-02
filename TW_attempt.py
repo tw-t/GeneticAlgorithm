@@ -69,6 +69,7 @@ def menu():
 #        print("A - Analyse alleles in the gene pool")        
         print("R - reset")
         print("P - list entire gene pool")
+        print("Conditions: "+" \n"+"*Triage is 31"+"; Hospital Tents are 4 and 5"+"; Petrols are 7, 8, 9, 22")
 
         opt=input() # take option input
         opt=opt.upper().strip()
