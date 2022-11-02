@@ -51,9 +51,15 @@ class Population:
             g.mutations = g.mutations + 1 # add one to global mutation marker
             self.pop[killMe].mutations = self.pop[killMe].mutations + 1; # add one to individual mutation marker
 
-            for k in range(0,g.rndInt(rng, 1, 8)): # repeat swap for 1 to 8 times
-               i = g.rndInt(rng, 0, g.NUM_OF_ITEMS -1) # choosing the item to re-allocate
-               self.pop[killMe].genome[i] = g.rndInt(g.globalRand, 0, g.NUM_OF_TRUCKS) # randomly re-allocate selected item again
+            LorS = g.rnd0or1(rng) # decide large or small mutation (50% chance each)
+            if (LorS == 0) :# mutation case 1 (large mutation)
+                Lmut = g.rndInt(rng, 0, g.POPULATION -1) # choosing individual to replace with random genome
+                self.pop[Lmut] = Genome_tw.Genome(g.globalRand)
+
+            else: # mutation case 2 (small mutation)
+                for k in range(0,g.rndInt(rng, 1, 8)): # repeat swap for 1 to 8 times
+                    Smut = g.rndInt(rng, 0, g.NUM_OF_ITEMS -1) # choosing the item to re-allocate
+                    self.pop[killMe].genome[Smut] = g.rndInt(g.globalRand, 0, g.NUM_OF_TRUCKS) # randomly re-allocate selected item again
 
 
     def breed(self, rng):
