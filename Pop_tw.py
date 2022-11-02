@@ -1,115 +1,172 @@
-# population my attempt
+# Genome my attempt
 
+import random
+import Items
 import g
-import Genome_tw
 
-class Population:
+items = Items.ItemList() # class object
+items.setItems()
 
-    pop = []  # the individuals of the population
+class Genome(object):
+
+    genome = [] # array of 35 items, with truck number as each gene (0=leftout, 1=truck1, 2=truck2, 3=truck3)
+    s0 = 0
+    s1 = 0
+    s2 = 0
+    s3 = 0
+    score=0 # lower score is better
+    generation=0
+    mutations=0
+    cond_score = 0 # counter to see if all conditions have been met
+
 
     def __init__(self,rng):
-        self.popReset(rng)
 
-    def popReset(self,rng):
-        self.pop = [None] * g.POPULATION # initialise an array with the chosen population size
+        self.genome = [None] * g.NUM_OF_ITEMS  # set up the size of genome according to number of items
 
-        # adding in an individual to each slot of the population (collection of 35 genomes makes an individual)
-        for i in range(0, g.POPULATION):
-            self.pop[i]= Genome_tw.Genome(g.globalRand)
+        for i in range(0, g.NUM_OF_ITEMS):
+            self.genome[i] = g.rndInt(g.globalRand, 0, g.NUM_OF_TRUCKS) # rng, randomly assign truck number (1,2,3) or left out (0) to gene
 
-    def calcScore(self):
-        # returns the number of the best individual
-        global bestScore, best # need this line???
-        retv = 0
-        self.pop[0].calcScoreG() # calculate score of first individual
-        g.bestScore = self.pop[0].score # initialise with score of first individual  ## still need g.???
-        for i in range(1, g.POPULATION): # looping through each individual in population
-            self.pop[i].calcScoreG() # finding score of 'the next' individual
-            if (self.pop[i].score < g.bestScore): # if the score of 'the next' individual is better (lower) than current, then replace
-                retv = i;
-                g.best=i # finds and sets the best performing individual id
-                g.bestScore =self.pop[i].score; # finds and sets the score of best performing individual
-        return retv; # returns ID of best individual
+        self.score = g.marker
+        self.generation = 0
+        self.mutations = 0
+        self.s0 = 0
+        self.s1 = 0
+        self.s2 = 0
+        self.s3 = 0
+        self.calcScoreG()
+        self.cond_score = 0
 
+    # display sequence for an individual
+    def showG(self):
+        retv = ""
+        leftout = ""
+        truck1 = ""
+        truck2 = ""
+        truck3 = ""
 
-    def mate(self, killMe, mum, dad, rng):
-
-        self.pop[killMe].score = g.marker # setting the score of the individual to become child as marker (reset)
-
-        # mutation strategy 1: mixing mum and dad to create child
-        for  i in range(0, g.NUM_OF_ITEMS): # looping through each genome (which defined with number of items)
-            if (rng.random() < 0.5):  # at 50% chance
-                self.pop[killMe].genome[i] = self.pop[mum].genome[i]; # swap the genome with mum's genome
-            else:
-                self.pop[killMe].genome[i] = self.pop[dad].genome[i]; # otherwise, swap with dad's genome
-           
-        self.pop[killMe].generation = max(self.pop[dad].generation, self.pop[mum].generation) + 1; # generation is counted as plus one to max of mum's or dad's
-        self.pop[killMe].mutations = max(self.pop[dad].mutations, self.pop[mum].mutations); # mutation is counted as max of mum's or dad's
+        retv="Score: {score}, generations: {gen}, mutations: {mut}".format(score=self.score, gen=self.generation, mut=self.mutations) + " \n"
         
-        # suprise twist- random mutations
-        if (rng.random() * 100 < g.MUTATIONPERCENT): # if random number is less than preset mutationPercent
-            g.mutations = g.mutations + 1 # add one to global mutation marker
-            self.pop[killMe].mutations = self.pop[killMe].mutations + 1; # add one to individual mutation marker
+        for i in range(0, g.NUM_OF_ITEMS):  # this is the list genomes
+            # left out list
+            if (self.genome[i] == 0):
+                leftout = leftout + str(i) + ", "
+            # truck 1 list
+            if (self.genome[i] == 1):
+                truck1 = truck1 + str(i) + ", "
+            # truck 2 list
+            if (self.genome[i] == 2):
+                truck2 = truck2 + str(i) + ", "
+            # truck 3 list
+            if (self.genome[i] == 3):
+                truck3 = truck3 + str(i) + ", "
 
-            LorS = g.rnd0or1(rng) # decide large or small mutation (50% chance each)
-            if (LorS == 0) :# mutation case 1 (large mutation)
-                Lmut = g.rndInt(rng, 0, g.POPULATION -1) # choosing individual to replace with random genome
-                self.pop[Lmut] = Genome_tw.Genome(g.globalRand)
-
-            else: # mutation case 2 (small mutation)
-                for k in range(0,g.rndInt(rng, 1, 8)): # repeat swap for 1 to 8 times
-                    Smut = g.rndInt(rng, 0, g.NUM_OF_ITEMS -1) # choosing the item to re-allocate
-                    self.pop[killMe].genome[Smut] = g.rndInt(g.globalRand, 0, g.NUM_OF_TRUCKS) # randomly re-allocate selected item again
-
-
-    def breed(self, rng):
-        #// picks 3 from this generation - kills the weakest and breeds from the other two
-        # choose 3 random individuals
-        c1 = g.rndInt(rng, 0, g.POPULATION -1)
-        c2 = g.rndInt(rng, 0, g.POPULATION -1)
-        c3 = g.rndInt(rng, 0, g.POPULATION -1)
-        # condition to choose again if any of the random individual id are the same, or if chose the child
-        while (c2 == c1 or c3 == c1 or c2 == c3 or
-            self.pop[c1].score == g.marker or self.pop[c2].score == g.marker or self.pop[c3].score == g.marker):
-            c1 = g.rndInt(rng, 0, g.POPULATION -1)
-            c2 = g.rndInt(rng, 0, g.POPULATION -1)
-            c3 = g.rndInt(rng, 0, g.POPULATION -1)
-        #// at this time c1, c2 , c3 are legit
-        if (self.pop[c1].score >= self.pop[c2].score and self.pop[c1].score >= self.pop[c3].score): # if c1 performs the worst out of three
-            self.mate(c1, c2, c3, rng)
-            return c1; ## set c1 as child of c2 and c3
- 
-        if (self.pop[c2].score >= self.pop[c1].score and self.pop[c2].score >= self.pop[c3].score): # if c2 performs the worst
-            self.mate(c2, c1, c3, rng)
-            return c2;  ## set c2 as child
-
-        if (self.pop[c3].score >= self.pop[c2].score and self.pop[c3].score >= self.pop[c1].score): # if c3 performs the worst
-            self.mate(c3, c2, c1, rng)
-            return c3;  ## set c3 as child
-        return -1; #// should never happen
-
-
-    def run1Generation(self):
-        global globalRand
-        gg = int(g.POPULATION / 2) # half of population number (50 in our case)
-        for i in range(0, gg):
-            self.breed(g.globalRand); # performing breed function 50 times
-        g.best = self.calcScore(); # find the best individual ID through the calcScore() above
-        g.generation = g.generation +1 # add one to global generation count
-
-    def show(self, num):
-        # creates a string do describe the population member, will work with function of same name in Genom.py
-        retv = "Best individual details: "
-        retv = retv + self.pop[num].showG()
+        retv = retv + "Truck 1: " + str(truck1) + " \n" + "Total size: " + str(self.s1) + "/" + str(g.TRUCK_CAPACITY) + " \n"
+        retv = retv + "Truck 2: " + str(truck2) + " \n" + "Total size: " + str(self.s2) + "/" + str(g.TRUCK_CAPACITY) + " \n"
+        retv = retv + "Truck 3: " + str(truck3) + " \n" + "Total size: " + str(self.s3) + "/" + str(g.TRUCK_CAPACITY) + " \n"
+        retv = retv + "Left out: " + str(leftout) + " \n" + "Remaining size: " + str(self.s0) + " \n"
+        
+        # display if individual has met all solution conditions
+        retv = retv + "Solution conditions: Must bring Triage(31), 2 of Petrols (7, 8, 9, 22); Hospital Tents together (4, 5)" + " \n"
+        if (self.cond_score == 5):
+            retv = retv + "Individual met all conditions."
+        else: 
+            retv = retv + "Individual NOT meet all conditions. CONTINUE"
         return retv
 
-    def showBest(self):
-        print("Best individual is "+str(g.best)) # displays best individual ID
-        print(self.show(g.best))  # less detail  ## runs show() in Genome_tw.py
-        print("Global details: generations="+str(g.generation)+"  mutations="+str(g.mutations)) # prints global gen and mut count (mutation count only have global count, gen have individual count)
-        print("=======================================================")
 
-    def run1Gen(self):
-        global globalRand, population
-        self.run1Generation()
-        self.showBest()
+    def calcScoreG(self):
+        global globalRand
+        global POPULATION
+        global TRUCK_CAPACITY
+        global NUM_OF_ITEMS
+        global NUM_OF_TRUCKS
+
+        self.score=0
+        self.s0 = 0
+        self.s1 = 0
+        self.s2 = 0
+        self.s3 = 0
+        self.cond_score = 0
+
+
+        # sequence to add up weight of items in each truck of one individual
+        # condition to give bias according to importance (incetivising)
+        for i, v in enumerate(self.genome):
+            # left out list
+            if (v == 0):
+                self.s0 = self.s0 + items.lst[i].size # calculates total sum for left out list
+
+            # truck 1
+            if (v == 1):
+                self.s1 = self.s1 + items.lst[i].size # calculates total sum for truck 1
+                if (items.lst[i].importance == "N"):
+                    self.score = self.score -0
+                if (items.lst[i].importance == "I"):
+                    self.score = self.score -1
+                if (items.lst[i].importance == "V"):
+                    self.score = self.score -2
+                if (items.lst[i].importance == "C"):
+                    self.score = self.score -3
+
+            # truck 2
+            if (v == 2):
+                self.s2 = self.s2 + items.lst[i].size # calculates total sum for truck 2
+                if (items.lst[i].importance == "N"):
+                    self.score = self.score -0
+                if (items.lst[i].importance == "I"):
+                    self.score = self.score -1
+                if (items.lst[i].importance == "V"):
+                    self.score = self.score -2
+                if (items.lst[i].importance == "C"):
+                    self.score = self.score -3
+
+            # truck 3
+            if (v == 3):
+                self.s3 = self.s3 + items.lst[i].size # calculates total sum for truck 3
+                if (items.lst[i].importance == "N"):
+                    self.score = self.score -0
+                if (items.lst[i].importance == "I"):
+                    self.score = self.score -1
+                if (items.lst[i].importance == "V"):
+                    self.score = self.score -2
+                if (items.lst[i].importance == "C"):
+                    self.score = self.score -3
+
+        # condition to penalise overloading (strongly penalise)
+        for s in [self.s1, self.s2, self.s3]: # note s0 does not affect score
+            if (s > g.TRUCK_CAPACITY):
+                self.score = self.score + abs(g.TRUCK_CAPACITY - s)
+                self.score = self.score + 20
+            else:
+                self.score = self.score + g.TRUCK_CAPACITY - s
+                self.cond_score = self.cond_score + 1 # solution condition met
+
+        # condition to bring Triage (strongly incentivise)
+        if (self.genome[31] != 0):
+            self.score = self.score -5
+            self.cond_score = self.cond_score + 1 # solution condition met
+
+        # condition to treat two part hospital tents as one
+        if (self.genome[4] != 0 and self.genome[5] == 0): # if only brought 1 tent (strongly penalise)
+            self.score = self.score + 10
+            self.cond_score = self.cond_score - 1 # solution condition NOT met
+        if (self.genome[5] != 0 and self.genome[4] == 0):
+            self.score = self.score + 10
+            self.cond_score = self.cond_score - 1 # solution condition NOT met
+
+#        if (self.genome[4] != 0 and self.genome[5] != 0):
+#            self.cond_score = self.cond_score + 1 # solution condition met
+#        if (self.genome[4] == 0 and self.genome[5] == 0):
+#            self.cond_score = self.cond_score + 1 # solution condition met
+
+        # condition to bring 2 out of 4 petrol items
+        petrol_items = [self.genome[7], self.genome[8], self.genome[9], self.genome[22]]
+        if (petrol_items.count(0) > 2): # 3 or 4 petrol items assigned to leftout list (strong penalty)
+            self.score = self.score + 10
+        if (petrol_items.count(0) <= 2): # at least 2 petrol items brought  (strongly incentivise)
+            self.score = self.score -5
+            self.cond_score = self.cond_score + 1 # solution condition met
+
+           
+        return self.score, self.cond_score
