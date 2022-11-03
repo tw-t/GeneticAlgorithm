@@ -39,6 +39,7 @@ def optR():
     g.population.popReset(g.globalRand) # resets population individuals
     g.mutations=0 # resets global mutation count
     g.generation = 0 # resets global generation count
+    g.dup_count=0
     print("reset done")
 
 
