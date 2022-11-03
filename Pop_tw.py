@@ -117,7 +117,7 @@ class Population:
             else:
                 g.dup_count = g.dup_count + 1
                 self.dup_ind.append(self.q)
-                self.pop[self.q] = Genome_tw.Genome(g.globalRand) # replace duplicates with random genome  ##UNCOMMENT THIS LINE FOR HD EXPERIMENT
+#                self.pop[self.q] = Genome_tw.Genome(g.globalRand) # replace duplicates with random genome  ##UNCOMMENT THIS LINE FOR HD EXPERIMENT
 
             self.q=self.q+1
 
